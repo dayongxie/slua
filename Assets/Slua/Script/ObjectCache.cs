@@ -28,8 +28,9 @@ namespace SLua
 	using System.Collections.Generic;
 	using LuaInterface;
 	using UnityEngine;
+    using SLua.Extensions;
 
-	class ObjectCache
+    class ObjectCache
 	{
 		static Dictionary<IntPtr, ObjectCache> multiState = new Dictionary<IntPtr, ObjectCache>();
 
@@ -264,7 +265,7 @@ namespace SLua
 
 		bool isGcObject(object obj)
 		{
-			return obj.GetType().IsValueType == false;
+			return obj.GetType().IsValueType() == false;
 		}
 	}
 }

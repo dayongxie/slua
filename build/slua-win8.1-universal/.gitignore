@@ -1,0 +1,8 @@
+*.opensdf
+*.sdf
+Debug
+ipch
+slua.WindowsPhone/Debug
+slua.Windows/ARM
+slua.WindowsPhone/ARM
+ARM

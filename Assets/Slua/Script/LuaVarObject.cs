@@ -30,10 +30,11 @@ namespace SLua
 	using LuaInterface;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
+    using SLua.Extensions;
 
-	// Try to avoid using this class for not export class
-	// This class use reflection and not completed, you should write your code for your purpose.
-	class LuaVarObject : LuaObject
+    // Try to avoid using this class for not export class
+    // This class use reflection and not completed, you should write your code for your purpose.
+    class LuaVarObject : LuaObject
 	{
 
 		class MethodWrapper
@@ -64,7 +65,7 @@ namespace SLua
 							switch (lt)
 							{
 								case LuaTypes.LUA_TFUNCTION:
-									return tn == "LuaFunction" || t.BaseType == typeof(MulticastDelegate);
+									return tn == "LuaFunction" || t.BaseType() == typeof(MulticastDelegate);
 								case LuaTypes.LUA_TTABLE:
 									return tn == "LuaTable" || LuaObject.luaTypeCheck(l, p, tn);
 								default:
@@ -204,12 +205,12 @@ namespace SLua
 			Type t = getType(self);
 
 			if (self is IDictionary)
-			{
-				if (t.IsGenericType && t.GetGenericArguments()[0] != typeof(string))
+            {
+                if (t.IsGenericType() && t.GetGenericArguments()[0] != typeof(string))
 				{
 					goto IndexProperty;
-				}
-				object v = (self as IDictionary)[key];
+                }
+                object v = (self as IDictionary)[key];
 				if (v != null)
 				{
 					pushVar(l, v);
@@ -218,37 +219,43 @@ namespace SLua
 			}
 
 IndexProperty:
+            
 			MemberInfo[] mis = t.GetMember(key, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public);
+
 			if (mis.Length == 0)
 			{
 				LuaDLL.luaL_error(l, "Can't find " + key);
 			}
 
-			MemberInfo mi = mis[0];
-			switch (mi.MemberType)
-			{
-				case MemberTypes.Property:
-					PropertyInfo p = (PropertyInfo)mi;
-					MethodInfo get = p.GetGetMethod();
-					pushVar(l, get.Invoke(self, null));
-					break;
-				case MemberTypes.Field:
-					FieldInfo f = (FieldInfo)mi;
-					pushVar(l, f.GetValue(self));
-					break;
-				case MemberTypes.Method:
-					LuaCSFunction ff = new MethodWrapper(self, mis).invoke;
-					pushObject(l, ff);
-					break;
-				case MemberTypes.Event:
-					break;
-				default:
-					return 0;
-			}
+            MemberInfo mi = mis[0];
 
-			return 1;
+            if (mi is PropertyInfo)
+            {
+                PropertyInfo p = (PropertyInfo)mi;
+                MethodInfo get = p.GetGetMethod();
+                pushVar(l, get.Invoke(self, null));
+            }
+            else if (mi is FieldInfo)
+            {
+                FieldInfo f = (FieldInfo)mi;
+                pushVar(l, f.GetValue(self));
+            }
+            else if (mi is MethodInfo)
+            {
+                LuaCSFunction ff = new MethodWrapper(self, mis).invoke;
+                pushObject(l, ff);
+            }
+            else if (mi is EventInfo)
+            {
+                // break
+            }
+            else
+            {
+                return 0;
+            }
 
-		}
+            return 1;
+        }
 
 		static void newindexString(IntPtr l, object self, string key)
 		{
@@ -265,33 +272,25 @@ IndexProperty:
 				LuaDLL.luaL_error(l, "Can't find " + key);
 			}
 
-			MemberInfo mi = mis[0];
-			switch (mi.MemberType)
-			{
-				case MemberTypes.Property:
-                    {
-                        PropertyInfo p = (PropertyInfo)mi;
-                        MethodInfo set = p.GetSetMethod();
-                        var value = checkVar(l, 3, p.PropertyType);
-                        set.Invoke(self, new object[] { value });
-                        break;
-                    }
-				case MemberTypes.Field:
-                    {
-                        FieldInfo f = (FieldInfo)mi;
-                        var value = checkVar(l, 3, f.FieldType);
-                        f.SetValue(self, value);
-                        break;
-                    }
-				case MemberTypes.Method:
-					LuaDLL.luaL_error(l, "Method can't set");
-					break;
-				case MemberTypes.Event:
-					break;
-
-			}
-
-		}
+            MemberInfo mi = mis[0];
+            if (mi is PropertyInfo)
+            {
+                PropertyInfo p = (PropertyInfo)mi;
+                MethodInfo set = p.GetSetMethod();
+                var value = checkVar(l, 3, p.PropertyType);
+                set.Invoke(self, new object[] { value });
+            }
+            else if (mi is FieldInfo)
+            {
+                FieldInfo f = (FieldInfo)mi;
+                var value = checkVar(l, 3, f.FieldType);
+                f.SetValue(self, value);
+            }
+            else if (mi is MethodInfo)
+            {
+                LuaDLL.luaL_error(l, "Method can't set");
+            }
+        }
 
 
 		static int indexInt(IntPtr l, object self, int index)
@@ -305,10 +304,10 @@ IndexProperty:
 			else if (self is IDictionary)
 			{
 				//support enumerate key
-				if (type.IsGenericType)
+				if (type.IsGenericType())
 				{
 					Type t = type.GetGenericArguments()[0];
-					if (t.IsEnum)
+					if (t.IsEnum())
 					{
 						pushVar(l, (self as IDictionary)[Enum.Parse(t, index.ToString())]);
                         return 1;
@@ -327,7 +326,7 @@ IndexProperty:
 			Type type = getType(self);
 			if (self is IList)
 			{
-				if (type.IsGenericType)
+				if (type.IsGenericType())
 				{
 					Type t = type.GetGenericArguments()[0];
 					(self as IList)[index] = Convert.ChangeType(checkVar(l, 3),t);
@@ -337,7 +336,7 @@ IndexProperty:
 			}
 			else if (self is IDictionary)
 			{
-				if (type.IsGenericType)
+				if (type.IsGenericType())
 				{
 					Type t = type.GetGenericArguments()[1];
 					(self as IDictionary)[index] = Convert.ChangeType(checkVar(l, 3),t);
@@ -411,7 +410,7 @@ IndexProperty:
 		}
 	}
 
-	class LuaClassObject
+	public class LuaClassObject
 	{
 		Type cls;
 

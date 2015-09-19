@@ -33,9 +33,9 @@ namespace SLua
 			add(typeof(System.Func<int>), null);
 			add(typeof(System.Action<int, string>), null);
 			add(typeof(System.Action<int, Dictionary<int, object>>), null);
-			add(typeof(List<int>), "ListInt");
-			add(typeof(Dictionary<int, string>), "DictIntStr");
-			add(typeof(string), "String");
+			//add(typeof(List<int>), "ListInt");
+			//add(typeof(Dictionary<int, string>), "DictIntStr");
+			//add(typeof(string), "String");
 			// add your custom class here
 			// add( type, typename)
 			// type is what you want to export
@@ -133,6 +133,15 @@ namespace SLua
 			"Ping",
             "ShaderVariantCollection",
 			"SimpleJson.Reflection",
+            "ProceduralPropertyDescription",
+            "ProceduralMaterial",
+            "ProceduralTexture",
+            "StackTraceUtility",
+            "Security",
+            "MissingComponentException",
+            "MissingReferenceException",
+            "UnassignedReferenceException",
+            "UnityException"
         };
 		}
 

@@ -148,7 +148,7 @@ namespace SLua
 		{
 		}
 
-		internal bool pcall(int nArgs, int errfunc)
+        public bool pcall(int nArgs, int errfunc)
 		{
 
 			if (!state.isMainThread())
@@ -398,7 +398,7 @@ namespace SLua
 	public class LuaState : IDisposable
 	{
 		IntPtr l_;
-		int mainThread = 0;
+        int mainThread = 0;
 		internal WeakDictionary<int, LuaDelegate> delgateMap = new WeakDictionary<int, LuaDelegate>();
 
 		public IntPtr L
@@ -451,8 +451,16 @@ namespace SLua
 
 		public bool isMainThread()
 		{
+#if UNITY_WINRT && !UNITY_EDITOR
+            if (System.Threading.Tasks.Task.CurrentId == null)
+            {
+                return true;
+            }
+            return false;
+#else
 			return System.Threading.Thread.CurrentThread.ManagedThreadId == mainThread;
-		}
+#endif
+        }
 
 		static public LuaState get(IntPtr l)
 		{
@@ -483,9 +491,13 @@ namespace SLua
 
 		public LuaState()
 		{
-			mainThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+#if UNITY_WINRT && !UNITY_EDITOR
+            //mainThread = System.Threading.Tasks.Task.CurrentId.Value;
+#else
+            mainThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+#endif
 
-			L = LuaDLL.luaL_newstate();
+            L = LuaDLL.luaL_newstate();
 			statemap[L] = this;
 			if (main == null) main = this;
 
@@ -609,7 +621,7 @@ end
 		}
 
 		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-		internal static int import(IntPtr l)
+		public static int import(IntPtr l)
 		{
 			LuaDLL.luaL_checktype(l, 1, LuaTypes.LUA_TSTRING);
 			string str = LuaDLL.lua_tostring(l, 1);
@@ -660,7 +672,7 @@ end
 			return LuaDLL.lua_gettop(L);  /* return status + all results */
 		}
 
-        internal static void pcall(IntPtr l,LuaCSFunction f)
+        public static void pcall(IntPtr l,LuaCSFunction f)
         {
             int err = LuaObject.pushTry(l);
             LuaDLL.lua_pushcfunction(l, f);
@@ -699,13 +711,13 @@ end
 		}
 
 		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-		internal static int loadfile(IntPtr L)
+        public static int loadfile(IntPtr L)
 		{
 			return loader(L);
 		}
 
 		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-		internal static int dofile(IntPtr L)
+        public static int dofile(IntPtr L)
 		{
 			int n = LuaDLL.lua_gettop(L);
 
@@ -806,7 +818,7 @@ end
 		}
 
 
-		internal object getObject(string key)
+        public object getObject(string key)
 		{
 			LuaDLL.lua_pushglobaltable(L);
 			object o = getObject(key.Split(new char[] { '.' }));
@@ -814,14 +826,14 @@ end
 			return o;
 		}
 
-		internal void setObject(string key, object v)
+        public void setObject(string key, object v)
 		{
 			LuaDLL.lua_pushglobaltable(L);
 			setObject(key.Split(new char[] { '.' }), v);
 			LuaDLL.lua_pop(L, 1);
 		}
 
-		internal object getObject(string[] remainingPath)
+        public object getObject(string[] remainingPath)
 		{
 			object returnValue = null;
 			for (int i = 0; i < remainingPath.Length; i++)
@@ -836,7 +848,7 @@ end
 		}
 
 
-		internal object getObject(int reference, string field)
+        public object getObject(int reference, string field)
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
@@ -845,7 +857,7 @@ end
 			return returnValue;
 		}
 
-		internal object getObject(int reference, int index)
+        public object getObject(int reference, int index)
 		{
 			if (index >= 1)
 			{
@@ -859,7 +871,7 @@ end
 			throw new IndexOutOfRangeException();
 		}
 
-		internal object getObject(int reference, object field)
+        public object getObject(int reference, object field)
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
@@ -870,7 +882,7 @@ end
 			return returnValue;
 		}
 
-		internal void setObject(string[] remainingPath, object o)
+        public void setObject(string[] remainingPath, object o)
 		{
 			int top = LuaDLL.lua_gettop(L);
 			for (int i = 0; i < remainingPath.Length - 1; i++)
@@ -885,7 +897,7 @@ end
 		}
 
 
-		internal void setObject(int reference, string field, object o)
+        public void setObject(int reference, string field, object o)
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
@@ -893,7 +905,7 @@ end
 			LuaDLL.lua_settop(L, oldTop);
 		}
 
-		internal void setObject(int reference, int index, object o)
+        public void setObject(int reference, int index, object o)
 		{
 			if (index >= 1)
 			{
@@ -907,7 +919,7 @@ end
 			throw new IndexOutOfRangeException();
 		}
 
-		internal void setObject(int reference, object field, object o)
+        public void setObject(int reference, object field, object o)
 		{
 			int oldTop = LuaDLL.lua_gettop(L);
 			LuaDLL.lua_getref(L, reference);
@@ -917,7 +929,7 @@ end
 			LuaDLL.lua_settop(L, oldTop);
 		}
 
-		internal object topObjects(int from)
+        public object topObjects(int from)
 		{
 			int top = LuaDLL.lua_gettop(L);
 			int nArgs = top - from;

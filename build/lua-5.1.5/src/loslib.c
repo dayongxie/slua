@@ -36,7 +36,8 @@ static int os_pushresult (lua_State *L, int i, const char *filename) {
 
 
 static int os_execute (lua_State *L) {
-  lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
+  //lua_pushinteger(L, system(luaL_optstring(L, 1, NULL)));
+  lua_pushinteger(L, -1);
   return 1;
 }
 
@@ -66,7 +67,8 @@ static int os_tmpname (lua_State *L) {
 
 
 static int os_getenv (lua_State *L) {
-  lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+  //lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+  lua_pushstring(L, NULL);
   return 1;
 }
 

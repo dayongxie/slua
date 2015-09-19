@@ -101,16 +101,16 @@ namespace SLua
 
 			luaState.checkRef();
 			LuaTimer.tick(Time.deltaTime);
-		}
+        }
 
+        static void bindAll(IntPtr l)
+        {
+            // add RELEASE macro to switch on below codes
 
-		static void bindAll(IntPtr l)
-		{
-			// add RELEASE macro to switch on below codes
-#if RELEASE && (UNITY_IOS || UNITY_ANDROID)
+#if RELEASE || !UNITY_EDITOR
             BindUnity.Bind(l);
             BindUnityUI.Bind(l); // delete this line if not found
-            BindDll.Bind(l); // delete this line if not found
+            //BindDll.Bind(l); // delete this line if not found
             BindCustom.Bind(l); 
 #else
             Assembly[] ams = AppDomain.CurrentDomain.GetAssemblies();
@@ -143,5 +143,6 @@ namespace SLua
 			}
 #endif
         }
-	}
+    }
+
 }

@@ -30,6 +30,7 @@ namespace SLua
 	using LuaInterface;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
+    using SLua.Extensions;
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Enum | AttributeTargets.Struct)]
 	public class CustomLuaClassAttribute : System.Attribute
@@ -566,7 +567,7 @@ return index
 			LuaDLL.lua_pushcfunction(l, lua_tostring);
 			LuaDLL.lua_setfield(l, -2, "__tostring");
 			
-			if (self.IsValueType)
+			if (self.IsValueType())
 			{
 				LuaDLL.lua_pushvalue(l, -1);
                 LuaDLL.lua_setglobal(l, self.FullName + ".Instance");
@@ -580,7 +581,7 @@ return index
 
             newTypeTable(l, ns);
 			LuaDLL.lua_pushcfunction(l, func);
-			LuaDLL.lua_setfield(l, -2, func.Method.Name);
+			LuaDLL.lua_setfield(l, -2, func.MethodInfo().Name);
 			LuaDLL.lua_pop(l, 1);
 		}
 
@@ -589,14 +590,14 @@ return index
             checkMethodValid(func);
 
             LuaDLL.lua_pushcfunction(l, func);
-			string name = func.Method.Name;
+			string name = func.MethodInfo().Name;
 			if (name.EndsWith("_s"))
 			{
 				name = name.Substring(0, name.Length - 2);
 				LuaDLL.lua_setfield(l, -3, name);
 			}
 			else
-				LuaDLL.lua_setfield(l, -2, func.Method.Name);
+				LuaDLL.lua_setfield(l, -2, func.MethodInfo().Name);
 		}
 
 		protected static void addMember(IntPtr l, LuaCSFunction func, bool instance)
@@ -604,7 +605,7 @@ return index
             checkMethodValid(func);
 
             LuaDLL.lua_pushcfunction(l, func);
-			string name = func.Method.Name;
+			string name = func.MethodInfo().Name;
 			LuaDLL.lua_setfield(l, instance ? -2 : -3, name);
 		}
 
@@ -709,15 +710,15 @@ return index
 			switch (lt)
 			{
                 case LuaTypes.LUA_TNIL:
-                    return !t.IsValueType && !t.IsPrimitive;
+                    return !t.IsValueType() && !t.IsPrimitive();
 				case LuaTypes.LUA_TNUMBER:
 #if LUA_5_3
 					if (LuaDLL.lua_isinteger(l, p) > 0)
-						return (t.IsPrimitive && t != typeof(float) && t != typeof(double)) || t.IsEnum;
+						return (t.IsPrimitive() && t != typeof(float) && t != typeof(double)) || t.IsEnum();
 					else
 						return t == typeof(float) || t == typeof(double);
 #else
-					return t.IsPrimitive || t.IsEnum;
+					return t.IsPrimitive() || t.IsEnum();
 #endif
 				case LuaTypes.LUA_TUSERDATA:
 					object o = checkObj(l, p);
@@ -731,7 +732,7 @@ return index
 					{
 						if (t == typeof(LuaTable))
 							return true;
-						else if (t.IsValueType)
+						else if (t.IsValueType())
 							return luaTypeCheck(l, p, t.Name);
 						else if (LuaDLL.luaS_subclassof(l, p, t.Name) == 1)
 							return true;
@@ -739,7 +740,7 @@ return index
 							return false;
 					}
 				case LuaTypes.LUA_TFUNCTION:
-					return t == typeof(LuaFunction) || t.BaseType == typeof(MulticastDelegate);
+					return t == typeof(LuaFunction) || t.BaseType() == typeof(MulticastDelegate);
                 case LuaTypes.LUA_TTHREAD:
                     return t == typeof(LuaThread);
                     
@@ -1559,7 +1560,7 @@ return index
 			PushVarDelegate push;
 			if (typePushMap.TryGetValue(t, out push))
 				push(l, o);
-			else if (t.IsEnum)
+			else if (t.IsEnum())
 			{
 				pushEnum(l, Convert.ToInt32(o));
 			}

@@ -115,7 +115,8 @@ return Class
 			return 0;
 		}
 
-		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+#if !UNITY_WINRT
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 		static public int CreateClass(IntPtr l)
 		{
 			try
@@ -161,10 +162,10 @@ return Class
 			}
 		}
 
+#endif
 
 
-
-		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 		static public int GetClass(IntPtr l)
 		{
 			try
@@ -257,7 +258,11 @@ return Class
         static public void reg(IntPtr l)
 		{
             getTypeTable(l, "Slua");
+
+#if !UNITY_WINRT
             addMember(l, CreateClass, false);
+#endif
+
             addMember(l, GetClass, false);
             addMember(l, iter, false);
             addMember(l, ToString, false);

@@ -105,13 +105,14 @@ static int io_noclose (lua_State *L) {
 /*
 ** function to close 'popen' files
 */
+#if 0
 static int io_pclose (lua_State *L) {
   FILE **p = tofilep(L);
   int ok = lua_pclose(L, *p);
   *p = NULL;
   return pushresult(L, ok, NULL);
 }
-
+#endif
 
 /*
 ** function to close regular files
@@ -171,6 +172,7 @@ static int io_open (lua_State *L) {
 ** this function has a separated environment, which defines the
 ** correct __close for 'popen' files
 */
+#if 0
 static int io_popen (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
@@ -178,7 +180,7 @@ static int io_popen (lua_State *L) {
   *pf = lua_popen(L, filename, mode);
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
-
+#endif
 
 static int io_tmpfile (lua_State *L) {
   FILE **pf = newfile(L);
@@ -484,7 +486,9 @@ static const luaL_Reg iolib[] = {
   {"lines", io_lines},
   {"open", io_open},
   {"output", io_output},
+#if 0
   {"popen", io_popen},
+#endif
   {"read", io_read},
   {"tmpfile", io_tmpfile},
   {"type", io_type},
@@ -547,10 +551,14 @@ LUALIB_API int luaopen_io (lua_State *L) {
   createstdfile(L, stdout, IO_OUTPUT, "stdout");
   createstdfile(L, stderr, 0, "stderr");
   lua_pop(L, 1);  /* pop environment for default files */
+
+#if 0
   lua_getfield(L, -1, "popen");
   newfenv(L, io_pclose);  /* create environment for 'popen' */
   lua_setfenv(L, -2);  /* set fenv for 'popen' */
   lua_pop(L, 1);  /* pop 'popen' */
+#endif
+
   return 1;
 }
 

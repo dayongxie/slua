@@ -5,6 +5,7 @@ if not UnityEngine.GameObject then
 	error("Click Make/All to generate lua wrap file")
 end
 
+print("mark 1")
 
 MyGameObject=Slua.Class(GameObject,
 	nil,
@@ -16,27 +17,41 @@ MyGameObject=Slua.Class(GameObject,
 	}	
 )
 
+print("mark 2")
 
 function main()
 
+	print("main1")
+	
 	if jit then
 		print("using luajit ",jit.version,jit.arch)
 	else
 		print("using lua")
 	end
 
+	print("main2")
+	
 	-- test custom component
 	local x=UnityEngine.GameObject("OoOo")
+	
+	print("main3")
+	
 	x:AddComponent(SLuaTest)
+	
+	print("main4")
+	
 	local c=x:GetComponent(SLuaTest)
-	print("test monobehaviour",c, c.transform, c:GetType().Name)
+	
+	print("main5")
+	
+	print("test monobehaviour",c, c.transform, c:GetType())
 	assert(c.gameObject.name=="OoOo")
 	local c=x:GetComponent(UnityEngine.BoxCollider)
 	assert(c==null)
 
-	local ll=XXList() -- it's List<int>
-	ll:Add(1)
-	print(ll.Count)
+	--local ll=XXList() -- it's List<int>
+	--ll:Add(1)
+	--print(ll.Count)
 
 	local x=MyGameObject("MyGameObject")
 	x:AddComponent(SphereCollider)
@@ -131,10 +146,12 @@ function main()
 
 		local www = WWW("http://www.sineysoft.com")
 		Yield(www)
-		print(#Slua.ToString(www.bytes))
+		print("www.sinesoft.com:" .. tostring(#Slua.ToString(www.bytes)))
 
 		local y = HelloWorld()
+		print("HelloWorld")
 		local y = y:y()
+		print("HelloWorld.y")
 		Yield(y)
 		print("Yield ok")
 	end)
@@ -156,9 +173,9 @@ function main()
 	HelloWorld.func6("aa",1,2,3,"bb")
 	HelloWorld.func6("aa",1,2,3,"bb",true,false)
 	HelloWorld.func6("aa")
-	local ss=String("bb")
-	HelloWorld.func6(ss,1,2) -- func6 accpet system.string as 1st parameter, you can pass "xx" or String("xx")
-	assert(ss~="bb") -- bb is luastring, ss is System.String
+	--local ss=String("bb")
+	--HelloWorld.func6(ss,1,2) -- func6 accpet system.string as 1st parameter, you can pass "xx" or String("xx")
+	--assert(ss~="bb") -- bb is luastring, ss is System.String
 	
 	-- test luafunction
 	local h=HelloWorld()

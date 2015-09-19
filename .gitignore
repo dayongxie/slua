@@ -9,3 +9,10 @@ obj/*
 /Assets/Slua/LuaObject
 /ProjectSettings
 /*.csproj
+.vs
+build/slua-win8.1-universal/ARM
+*.opensdf
+*.sdf
+build/slua-win8.1-universal/slua.Windows/ARM
+build/slua-win8.1-universal/slua.WindowsPhone/ARM
+build/slua-win8.1-universal/slua.WindowsPhone/Debug
