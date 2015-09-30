@@ -37,11 +37,12 @@ namespace SLua
 		public LuaState state;
 		public Action onUpdate;
 		public bool skipDebugger = true;
+
 		DebugInterface di;
 
-		// make sure lua state finalize at last
-		// make sure LuaSvrGameObject excute order is max(9999)
-		void OnDestroy()
+        // make sure lua state finalize at last
+        // make sure LuaSvrGameObject excute order is max(9999)
+        void OnDestroy()
 		{
 			if (state != null)
 			{

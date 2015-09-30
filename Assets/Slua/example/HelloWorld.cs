@@ -59,8 +59,9 @@ public class HelloWorld
 	}
 
 	public IEnumerator y()
-	{
-		WWW www = new WWW("http://news.163.com");
+    {
+        Debug.Log("yield begin");
+        WWW www = new WWW("http://news.163.com");
 		yield return www;
 		Debug.Log("yield good");
 	}

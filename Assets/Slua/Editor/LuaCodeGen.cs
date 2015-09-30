@@ -397,6 +397,8 @@ namespace SLua
             "AnimatorControllerParameter.name",
             "Input.IsJoystickPreconfigured",
             "Resources.LoadAssetAtPath",
+            "UnityEventBase.GetValidMethodInfo",
+            "NavMesh.CalculateTriangulation"
 #if UNITY_4_6
 			"Motion.ValidateIfRetargetable",
 			"Motion.averageDuration",

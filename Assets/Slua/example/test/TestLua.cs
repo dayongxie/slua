@@ -327,13 +327,17 @@ namespace NLuaTest.Mock
 		
 		public void DoWork ()
 		{
-			
-			//simulate work by sleeping
-			//Debug.Log("Started to do work on thread: " + Thread.CurrentThread.ManagedThreadId);
-			Thread.Sleep (new Random ().Next (0, 1000));
-			//Debug.Log("Finished work on thread: " + Thread.CurrentThread.ManagedThreadId);
-		}
-	}
+
+            //simulate work by sleeping
+            //Debug.Log("Started to do work on thread: " + Thread.CurrentThread.ManagedThreadId);
+#if UNITY_WINRT && !UNITY_EDITOR
+            System.Threading.Tasks.Task.Delay(new Random().Next(0, 1000));
+#else
+            Thread.Sleep(new Random().Next(0, 1000));
+#endif
+            //Debug.Log("Finished work on thread: " + Thread.CurrentThread.ManagedThreadId);
+        }
+    }
 	
 	/// <summary>
 	/// test structure passing

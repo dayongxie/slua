@@ -62,25 +62,32 @@ namespace SLua
 		private void doBind(object state)
 		{
 			IntPtr L = (IntPtr)state;
-			
-			Assembly[] ams = AppDomain.CurrentDomain.GetAssemblies();
-			
-			bindProgress = 0;
 
-			List<Type> bindlist = new List<Type>();
-			foreach (Assembly a in ams)
-			{
-				Type[] ts = a.GetExportedTypes();
-				foreach (Type t in ts)
-				{
-					if (t.GetCustomAttributes(typeof(LuaBinderAttribute), false).Length > 0)
-					{
-						bindlist.Add(t);
-					}
-				}
-			}
-			
-			bindProgress = 1;
+#if UNITY_WINRT && !UNITY_EDITOR
+            List<Type> bindlist = new List<Type>();
+            bindlist.Add(Type.GetType("BindCustom"));
+            bindlist.Add(Type.GetType("BindUnity"));
+            bindlist.Add(Type.GetType("BindUnityUI"));
+#else
+            Assembly[] ams = AppDomain.CurrentDomain.GetAssemblies();
+
+            bindProgress = 0;
+
+            List<Type> bindlist = new List<Type>();
+            foreach (Assembly a in ams)
+            {
+                Type[] ts = a.GetExportedTypes();
+                foreach (Type t in ts)
+                {
+                    if (t.GetCustomAttributes(typeof(LuaBinderAttribute), false).Length > 0)
+                    {
+                        bindlist.Add(t);
+                    }
+                }
+            }
+#endif
+
+            bindProgress = 1;
 			
 			bindlist.Sort(new System.Comparison<Type>((Type a, Type b) => {
 				LuaBinderAttribute la = (LuaBinderAttribute)a.GetCustomAttributes(typeof(LuaBinderAttribute), false)[0];
@@ -163,9 +170,14 @@ namespace SLua
 			IntPtr L = luaState.L;
 			LuaObject.init(L);
 
-			ThreadPool.QueueUserWorkItem(doBind, L);
+#if UNITY_WINRT && !UNITY_EDITOR
+            System.Threading.Tasks.Task t = new System.Threading.Tasks.Task(doBind, L);
+            t.Start();
+#else
+            ThreadPool.QueueUserWorkItem(doBind, L);
+#endif
 
-			lgo.StartCoroutine(waitForBind(tick, () =>
+            lgo.StartCoroutine(waitForBind(tick, () =>
 			{
 				this.luaState = luaState;
 				doinit(L);

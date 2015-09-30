@@ -113,8 +113,8 @@ return Class
 			}
 			return error(l,"passed in object isn't enumerable");
 		}
-
-		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 		static public int CreateClass(IntPtr l)
 		{
 			try
@@ -160,10 +160,7 @@ return Class
 			}
 		}
 
-
-
-
-		[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
 		static public int GetClass(IntPtr l)
 		{
 			try
@@ -289,6 +286,7 @@ return Class
         static public void reg(IntPtr l)
 		{
             getTypeTable(l, "Slua");
+
             addMember(l, CreateClass, false);
             addMember(l, GetClass, false);
             addMember(l, iter, false);

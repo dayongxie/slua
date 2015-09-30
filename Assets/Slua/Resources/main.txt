@@ -15,13 +15,15 @@ MyGameObject=Slua.Class(GameObject,
 	}	
 )
 
+
 function main()
 
 	-- test split of System.String
-	local x=String("a,b,c,d/e/f/g")
-	print(unpack(x:Split(",/",0)))
-	print(unpack(x:Split({",","/"},0)))
-
+	if String then
+		local x=String("a,b,c,d/e/f/g")
+		print(unpack(x:Split(",/",0)))
+		print(unpack(x:Split({",","/"},0)))
+	end
 
 	local t=dofile('module/some')
 	assert(type(t)=='table')
@@ -38,6 +40,8 @@ function main()
 		print("using lua")
 	end
 
+	print("main2")
+	
 	-- test custom component
 	local x=UnityEngine.GameObject("OoOo")
 	x:AddComponent(SLuaTest)
@@ -47,9 +51,9 @@ function main()
 	local c=x:GetComponent(UnityEngine.BoxCollider)
 	assert(c==null)
 
-	local ll=XXList() -- it's List<int>
-	ll:Add(1)
-	print(ll.Count)
+	--local ll=XXList() -- it's List<int>
+	--ll:Add(1)
+	--print(ll.Count)
 
 	local x=MyGameObject("MyGameObject")
 	x:AddComponent(SphereCollider)
@@ -144,10 +148,12 @@ function main()
 
 		local www = WWW("http://www.sineysoft.com")
 		Yield(www)
-		print(#Slua.ToString(www.bytes))
+		print("www.sinesoft.com:" .. tostring(#Slua.ToString(www.bytes)))
 
 		local y = HelloWorld()
+		print("HelloWorld")
 		local y = y:y()
+		print("HelloWorld.y")
 		Yield(y)
 		print("Yield ok")
 	end)
@@ -169,9 +175,9 @@ function main()
 	HelloWorld.func6("aa",1,2,3,"bb")
 	HelloWorld.func6("aa",1,2,3,"bb",true,false)
 	HelloWorld.func6("aa")
-	local ss=String("bb")
-	HelloWorld.func6(ss,1,2) -- func6 accpet system.string as 1st parameter, you can pass "xx" or String("xx")
-	assert(ss~="bb") -- bb is luastring, ss is System.String
+	--local ss=String("bb")
+	--HelloWorld.func6(ss,1,2) -- func6 accpet system.string as 1st parameter, you can pass "xx" or String("xx")
+	--assert(ss~="bb") -- bb is luastring, ss is System.String
 	
 	-- test luafunction
 	local h=HelloWorld()

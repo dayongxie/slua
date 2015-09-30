@@ -33,9 +33,9 @@ namespace SLua
 			add(typeof(System.Func<int>), null);
 			add(typeof(System.Action<int, string>), null);
 			add(typeof(System.Action<int, Dictionary<int, object>>), null);
-			add(typeof(List<int>), "ListInt");
-			add(typeof(Dictionary<int, string>), "DictIntStr");
-			add(typeof(string), "String");
+			//add(typeof(List<int>), "ListInt");
+			//add(typeof(Dictionary<int, string>), "DictIntStr");
+			//add(typeof(string), "String");
 			// add your custom class here
 			// add( type, typename)
 			// type is what you want to export
@@ -144,6 +144,33 @@ namespace SLua
 			"SimpleJson.Reflection",
 			"CoroutineTween",
 			"GraphicRebuildTracker",
+            "ProceduralPropertyDescription",
+            "ProceduralMaterial",
+            "ProceduralTexture",
+            "StackTraceUtility",
+            "Security",
+            "MissingComponentException",
+            "MissingReferenceException",
+            "UnassignedReferenceException",
+            "UnityException",
+            "WSA.Launcher",
+            "WSA.Application",
+            "WSA.Folder",
+            "WSA.SecondaryTileData",
+            "WSA.Tile",
+            "WSA.TileForegroundText",
+            "WSA.TileTemplate",
+            "WSA.Toast",
+            "WSA.AppCallbackItem",
+            "WSA.WindowSizeChanged",
+            "WSA.WindowActivated",
+            "WSA.ToastTemplate",
+            "WSA.WindowActivationState",
+            "Windows.LicenseInformation",
+            "Windows.File",
+            "Windows.Crypto",
+            "Windows.Directory",
+            "EventProvider",
         };
 		}
 

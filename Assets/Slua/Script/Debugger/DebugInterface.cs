@@ -21,7 +21,9 @@
 // THE SOFTWARE.
 
 // Comment out this line to switch off remote debugger for slua
-#define LuaDebugger
+//#define LuaDebugger
+
+//#if !UNITY_WINRT || UNITY_EDITOR
 
 namespace SLua
 {
@@ -30,19 +32,34 @@ namespace SLua
 	using System.Collections.Generic;
 	using SLua;
 	using System;
-	using System.Net;
-	using System.Net.Sockets;
 	using LuaInterface;
 	using System.IO;
 	using System.Text.RegularExpressions;
 	using System.Reflection;
 
-	class DebugInterface : LuaObject
+#if UNITY_WINRT && !UNITY_EDITOR
+    using Windows.Networking;
+    using Windows.Networking.Connectivity;
+    using Windows.Networking.Sockets;
+    using Windows.Storage.Streams;
+#else
+    using System.Net;
+    using System.Net.Sockets;
+#endif
+
+    class DebugInterface : LuaObject
 	{
 		LuaState state;
-		Socket server;
-		Socket client;
-		bool start = false;
+
+#if UNITY_WINRT && !UNITY_EDITOR
+        StreamSocketListener server;
+        StreamSocket client;
+#else
+        Socket server;
+        Socket client;
+#endif
+
+        bool start = false;
 
 		const int RecvMax = 1024;
 		byte[] recvBuffer = new byte[RecvMax];
@@ -208,29 +225,36 @@ watch local/up value  			watch
 		public void init()
 		{
 #if LuaDebugger
-			try
-			{
-				IPEndPoint localEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), DebugPort);
-				server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-				server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-				server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-				server.Bind(localEP);
-				server.Listen(10);
-				server.BeginAccept(new AsyncCallback(onClientConnect), server);
-				Debug.Log("Opened lua debugger interface at " + localEP.ToString());
 
-				// redirect output to client socket
-				var luaFunc = state.getFunction("Slua.ldb.setOutput");
-				luaFunc.call((LuaCSFunction)output);
-			}
-			catch (Exception e)
-			{
-				Debug.LogError(string.Format("LuaDebugger listened failed for reason:：{0}", e.Message));
-			}
+            try
+            {
+#if UNITY_WINRT && !UNITY_EDITOR
+                server = new StreamSocketListener();
+                server.ConnectionReceived += OnConnection;
+
+                server.BindServiceNameAsync("LuaDebugger");
+#else
+                IPEndPoint localEP = new IPEndPoint(IPAddress.Parse("0.0.0.0"), DebugPort);
+                server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                server.Bind(localEP);
+                server.Listen(10);
+                server.BeginAccept(new AsyncCallback(onClientConnect), server);
+                Debug.Log("Opened lua debugger interface at " + localEP.ToString());
 #endif
-		}
+                // redirect output to client socket
+                var luaFunc = state.getFunction("Slua.ldb.setOutput");
+                luaFunc.call((LuaCSFunction)output);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("LuaDebugger listened failed for reason:：{0}", e.Message));
+            }
+#endif
+        }
 
-		public void update()
+        public void update()
 		{
 #if LuaDebugger
 			if (client == null || !client.Connected)
@@ -254,10 +278,15 @@ watch local/up value  			watch
 		{
 			while (true)
 			{
-				if (client == null || !client.Connected)
+#if UNITY_WINRT && !UNITY_EDITOR
+                if (client == null)
 					break;
+#else
+                if (client == null || !client.Connected)
+                    break;
+#endif
 
-				int len;
+                int len;
 				if (recvCmd(recvBuffer, out len))
 				{
 					string str = System.Text.Encoding.UTF8.GetString(recvBuffer, 0, len);
@@ -277,11 +306,13 @@ watch local/up value  			watch
 				else
 					break;
 			}
-		}
-
-		bool recvCmd(byte[] bytes, out int len)
-		{
-			len = 0;
+        }
+        
+        bool recvCmd(byte[] bytes, out int len)
+        {
+            len = 0;
+#if UNITY_WINRT && !UNITY_EDITOR
+#else
 			try
 			{
 				if (packageLen == 0 && client.Available >= sizeof(int))
@@ -316,22 +347,35 @@ watch local/up value  			watch
 			{
 				onClientDisconnect();
 			}
-			return false;
+#endif
+            return false;
 		}
 
 
 		public void send(string str)
-		{
-			if (client != null && client.Connected)
-			{
-				client.Blocking = true;
-				byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str);
-				int bytelen = bytes.Length;
-				byte[] len = BitConverter.GetBytes(bytelen);
-				client.Send(len);
+        {
+#if UNITY_WINRT && !UNITY_EDITOR
+            if (client != null)
+#else
+            if (client != null && client.Connected)
+#endif
+            {
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(str);
+                int bytelen = bytes.Length;
+                byte[] len = BitConverter.GetBytes(bytelen);
+
+#if UNITY_WINRT && !UNITY_EDITOR
+                DataWriter writer = new DataWriter(client.OutputStream);
+                writer.WriteBytes(len);
+                writer.WriteBytes(bytes);
+                writer.StoreAsync();
+#else
+                client.Blocking = true;
+                client.Send(len);
 				client.Send(bytes);
 				client.Blocking = false;
-			}
+#endif
+            }
 		}
 
 		public void send(string fmt, params object[] args)
@@ -348,12 +392,27 @@ watch local/up value  			watch
 		public bool isStarted
 		{
 			get
-			{
-				return client != null && client.Connected && start;
-			}
+            {
+#if UNITY_WINRT && !UNITY_EDITOR
+				return client != null && start;
+#else
+                return client != null && client.Connected && start;
+#endif
+            }
 		}
 
-		void onClientConnect(IAsyncResult target)
+#if UNITY_WINRT && !UNITY_EDITOR
+         private async void OnConnection(
+            StreamSocketListener sender, 
+            StreamSocketListenerConnectionReceivedEventArgs args)
+        {
+			if (server == null)
+				return;
+
+            client = args.Socket;
+        }
+#else
+        void onClientConnect(IAsyncResult target)
 		{
 			if (server == null)
 				return;
@@ -367,25 +426,38 @@ watch local/up value  			watch
 
 			Debug.Log("New debug session connected");
 		}
+#endif
 
-		public void close()
-		{
-			if (client != null && client.Connected)
-			{
+        public void close()
+        {
+#if UNITY_WINRT && !UNITY_EDITOR
+			if (client != null)
+            {
+				client.Dispose();
+				client = null;
+			}
+#else
+            if (client != null && client.Connected)
+            {
 				client.Close();
 				client = null;
 			}
+#endif
 
-			if (server != null)
-			{
-				try
-				{
+            if (server != null)
+            {
+#if UNITY_WINRT && !UNITY_EDITOR
+                server.Dispose();
+#else
+                try
+                {
 					server.Shutdown(SocketShutdown.Both);
 				}
 				catch (Exception)
 				{ }
 				server.Close();
-				server = null;
+#endif
+                server = null;
 			}
 
 			Debug.Log("Closed lua debugger interface.");
@@ -395,11 +467,14 @@ watch local/up value  			watch
 		void onClientDisconnect()
 		{
 			state.doString("Slua.ldb.clearBreakPoint()");
-
-			client.Close();
+#if UNITY_WINRT && !UNITY_EDITOR
+            client.Dispose();
 			client = null;
-
-			Debug.Log("Debug session disconnected");
+#else
+            client.Close();
+            client = null;
+#endif
+            Debug.Log("Debug session disconnected");
 		}
 
 		public string md5(string f)

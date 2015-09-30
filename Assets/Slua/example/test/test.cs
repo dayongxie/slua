@@ -234,18 +234,23 @@ public class test : MonoBehaviour {
 		}
 
 		public void TestDispose ()
-		{
-			System.GC.Collect ();
-			long startingMem = System.Diagnostics.Process.GetCurrentProcess ().WorkingSet64;
-			
-			for (int i = 0; i < 100; i++) {
+        {
+            System.GC.Collect();
+#if UNITY_WINRT && !UNITY_EDITOR
+#else
+            long startingMem = System.Diagnostics.Process.GetCurrentProcess ().WorkingSet64;
+#endif
+            for (int i = 0; i < 100; i++) {
 				
 					_Calc (lua, i);
 			}
-			
-			//TODO: make this test assert so that it is useful
-			Debug.Log ("Was using " + (startingMem / 1024 / 1024) + "MB, now using: " + (System.Diagnostics.Process.GetCurrentProcess ().WorkingSet64 / 1024 / 1024) + "MB");
-		}
+
+#if UNITY_WINRT && !UNITY_EDITOR
+#else
+            //TODO: make this test assert so that it is useful
+            Debug.Log ("Was using " + (startingMem / 1024 / 1024) + "MB, now using: " + (System.Diagnostics.Process.GetCurrentProcess ().WorkingSet64 / 1024 / 1024) + "MB");
+#endif
+        }
 		
 		private void _Calc (LuaState lua, int i)
 		{

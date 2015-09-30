@@ -1,0 +1,96 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "slua", "slua\slua.csproj", "{9A513B19-3E02-41BF-8968-58BC58B0A6B3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libslua.Shared", "..\build\slua-win8.1-universal\slua.Shared\slua.Shared.vcxitems", "{DBEF7ADE-8AAD-4FEB-BEBF-7057EA234CA0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libslua.Windows", "..\build\slua-win8.1-universal\slua.Windows\slua.Windows.vcxproj", "{17FB8268-D0CC-4354-B8C7-3B93A5853A94}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SLuaBridge.Shared", "..\build\slua-win8.1-universal\SLuaBridge\SLuaBridge.Shared\SLuaBridge.Shared.vcxitems", "{E8FF650C-7D79-40E1-9CF4-6D166308EB82}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SLuaBridge.Windows", "..\build\slua-win8.1-universal\SLuaBridge\SLuaBridge.Windows\SLuaBridge.Windows.vcxproj", "{06E4AC05-B67D-4439-AC53-4539576827E9}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\build\slua-win8.1-universal\SLuaBridge\SLuaBridge.Shared\SLuaBridge.Shared.vcxitems*{06e4ac05-b67d-4439-ac53-4539576827e9}*SharedItemsImports = 4
+		..\build\slua-win8.1-universal\SLuaBridge\SLuaBridge.Shared\SLuaBridge.Shared.vcxitems*{e8ff650c-7d79-40e1-9cf4-6d166308eb82}*SharedItemsImports = 9
+		..\build\slua-win8.1-universal\slua.Shared\slua.Shared.vcxitems*{17fb8268-d0cc-4354-b8c7-3b93a5853a94}*SharedItemsImports = 4
+		..\build\slua-win8.1-universal\slua.Shared\slua.Shared.vcxitems*{dbef7ade-8aad-4feb-bebf-7057ea234ca0}*SharedItemsImports = 9
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Master|ARM = Master|ARM
+		Master|x64 = Master|x64
+		Master|x86 = Master|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|ARM.ActiveCfg = Debug|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|ARM.Build.0 = Debug|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|ARM.Deploy.0 = Debug|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|x64.ActiveCfg = Debug|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|x86.ActiveCfg = Debug|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|x86.Build.0 = Debug|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Debug|x86.Deploy.0 = Debug|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|ARM.ActiveCfg = Master|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|ARM.Build.0 = Master|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|ARM.Deploy.0 = Master|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|x64.ActiveCfg = Master|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|x86.ActiveCfg = Master|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|x86.Build.0 = Master|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Master|x86.Deploy.0 = Master|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|ARM.ActiveCfg = Release|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|ARM.Build.0 = Release|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|ARM.Deploy.0 = Release|ARM
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|x64.ActiveCfg = Release|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|x86.ActiveCfg = Release|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|x86.Build.0 = Release|x86
+		{9A513B19-3E02-41BF-8968-58BC58B0A6B3}.Release|x86.Deploy.0 = Release|x86
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|ARM.ActiveCfg = Debug|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|ARM.Build.0 = Debug|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|x64.ActiveCfg = Debug|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|x64.Build.0 = Debug|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|x86.ActiveCfg = Debug|Win32
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Debug|x86.Build.0 = Debug|Win32
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|ARM.ActiveCfg = Release|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|ARM.Build.0 = Release|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|x64.ActiveCfg = Release|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|x64.Build.0 = Release|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|x86.ActiveCfg = Release|Win32
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Master|x86.Build.0 = Release|Win32
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|ARM.ActiveCfg = Release|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|ARM.Build.0 = Release|ARM
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|x64.ActiveCfg = Release|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|x64.Build.0 = Release|x64
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|x86.ActiveCfg = Release|Win32
+		{17FB8268-D0CC-4354-B8C7-3B93A5853A94}.Release|x86.Build.0 = Release|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|ARM.ActiveCfg = Debug|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|ARM.Build.0 = Debug|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|x64.ActiveCfg = Debug|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|x64.Build.0 = Debug|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|x86.ActiveCfg = Debug|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Debug|x86.Build.0 = Debug|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|ARM.ActiveCfg = Release|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|ARM.Build.0 = Release|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|x64.ActiveCfg = Release|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|x64.Build.0 = Release|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|x86.ActiveCfg = Release|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Master|x86.Build.0 = Release|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|ARM.ActiveCfg = Release|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|ARM.Build.0 = Release|ARM
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|x64.ActiveCfg = Release|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|x64.Build.0 = Release|x64
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|x86.ActiveCfg = Release|Win32
+		{06E4AC05-B67D-4439-AC53-4539576827E9}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
